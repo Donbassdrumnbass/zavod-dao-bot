@@ -15,7 +15,7 @@ import re
 # ============================================================
 API_ID = 33739613               # твой api_id с my.telegram.org
 API_HASH = "9cff7d08655717927a7f5e4ed64cae2b"      # твой api_hash с my.telegram.org
-BOT_TOKEN = "8772294114:AAHExInjuEa_Z_droP06DDs6ZY6mW58i_9g
+BOT_TOKEN = "8772294114:AAHExInjuEa_Z_droP06DDs6ZY6mW58i_9g"
 "   # токен от @BotFather
 TARGET_CHANNEL = "@zavod_dao"   # твой канал куда публикуем
 ADMIN_ID = 1873762723            # твой Telegram ID (узнай у @userinfobot)
