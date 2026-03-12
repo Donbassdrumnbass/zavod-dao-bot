@@ -1,103 +1,80 @@
 """
 ЗАВОД DAO — Telegram Aggregator Bot
-=====================================
-Установка: pip install telethon python-telegram-bot
-Запуск: python zavod_dao_bot.py
 """
 
 from telethon import TelegramClient, events
-from telethon.tl.types import MessageEntityUrl, MessageEntityTextUrl
 import asyncio
-import re
 
 # ============================================================
-# 🔑 ТВОИ ДАННЫЕ — ВСТАВЬ СЮДА
+# ДАННЫЕ
 # ============================================================
-API_ID = 33739613               # твой api_id с my.telegram.org
-API_HASH = "9cff7d08655717927a7f5e4ed64cae2b"      # твой api_hash с my.telegram.org
+API_ID = 33739613
+API_HASH = "9cff7d08655717927a7f5e4ed64cae2b"
 BOT_TOKEN = "8772294114:AAHExInjuEa_Z_droP06DDs6ZY6mW58i_9g"
-"   # токен от @BotFather
-TARGET_CHANNEL = "@zavod_dao"   # твой канал куда публикуем
-ADMIN_ID = 1873762723            # твой Telegram ID (узнай у @userinfobot)
+TARGET_CHANNEL = "@zavod_dao"
+ADMIN_ID = 1873762723
 
 # ============================================================
-# 📋 СПИСОК КАНАЛОВ-ИСТОЧНИКОВ — добавляй и убирай каналы
+# СПИСОК КАНАЛОВ-ИСТОЧНИКОВ
 # ============================================================
 SOURCE_CHANNELS = [
-    # Твои каналы
-    "@natykcryptooo",
-    "@Slavik_investor_updates",
-    "@mykytaio",
-    "@speculator_guy",
-    "@CryptoTravelsWithDmytro",
-    "@Defiscamcheck",
-    "@danokhlopkov",
-    "@skhema_crypto",
-    "@eligible4",
-    "@maisonuranus",
-    "@TeddyinCrypto",
-    "@AI_Handler",
-    "@KriptoUkraine",
-    "@Crypt0Hermes",
-    "@idoresearch",
-    "@GentleChron",
-    "@digitalbios",
-    "@Yung_HoDler",
-    "@TeddyDrops",
-    "@autofina",
-    "@afina_io",
-    "@OOO_ZavodDAO",
-    # Русскоязычные топ-каналы
-    "@forklog",
-    "@bits_media",
-    "@cryptonewsru",
-    "@coinmarketcap_ru",
-    "@binance_russian",
-    "@bybit_russian",
-    "@crypto_godfather",
-    "@prostocoin",
-    "@cryptoalert_ru",
-    "@whalesinside",
-    "@cryptoportal",
-    "@beincrypto_russian",
-    "@incrypted",
-    "@cryptokrot",
-    "@mmgp_bitcoin",
-    "@cryptoinsider_ru",
-    "@tcanalysis",
-    "@ru_btc",
-    "@cryptorussia",
-    "@cryptoportal",
+    "natykcryptooo",
+    "Slavik_investor_updates",
+    "mykytaio",
+    "speculator_guy",
+    "CryptoTravelsWithDmytro",
+    "Defiscamcheck",
+    "danokhlopkov",
+    "skhema_crypto",
+    "eligible4",
+    "maisonuranus",
+    "TeddyinCrypto",
+    "AI_Handler",
+    "KriptoUkraine",
+    "Crypt0Hermes",
+    "idoresearch",
+    "GentleChron",
+    "digitalbios",
+    "Yung_HoDler",
+    "TeddyDrops",
+    "autofina",
+    "afina_io",
+    "OOO_ZavodDAO",
+    "forklog",
+    "bits_media",
+    "coinmarketcap_ru",
+    "binance_russian",
+    "bybit_russian",
+    "prostocoin",
+    "whalesinside",
+    "beincrypto_russian",
+    "incrypted",
+    "cryptokrot",
+    "tcanalysis",
+    "ru_btc",
 ]
 
 # ============================================================
-# 🚫 ЧЁРНЫЙ СПИСОК — посты с этими словами НЕ публикуются
+# ЧЁРНЫЙ СПИСОК — посты с этими словами НЕ публикуются
 # ============================================================
 BLACKLIST = [
-    # Прямая реклама
     "реклама", "на правах рекламы", "партнёрский материал",
     "промо", "спонсор", "совместно с", "при поддержке",
     "#реклама", "#промо", "#ad", "#sponsored", "#partner",
-    # Продажи
     "купить сейчас", "успей купить", "ограниченное предложение",
     "только сегодня", "промокод", "реферальная ссылка",
     "пригласи друга", "пассивный доход",
-    "гарантированная прибыль", "сигналы на",
-    # Накрутка
-    "подпишись на", "подписывайся на", "наш канал",
-    "перейди по ссылке", "жми сюда", "переходи",
+    "гарантированная прибыль",
+    "подпишись на", "подписывайся на",
+    "перейди по ссылке", "жми сюда",
     "наш партнёр", "читай здесь",
-    # Скам
     "раздача токенов", "бесплатные монеты", "удвоение",
-    "x100 прибыли", "x1000", "инсайд слив",
     "вип группа", "закрытый клуб", "слив сигналов",
-    # Розыгрыши
-    "розыгрыш", "розыгрыша", "разыгрываем", "победитель получит",
-    "участвуй в розыгрыше",
+    "розыгрыш", "разыгрываем", "участвуй в розыгрыше",
 ]
 
 # ============================================================
-# ✅ БЕЛЫЙ СПИСОК — посты с этими словами публикуются ВСЕГДА
+# БЕЛЫЙ СПИСОК — эти посты публикуются ВСЕГДА
 # ============================================================
 WHITELIST = [
     "bitcoin", "btc", "ethereum", "eth", "sec",
@@ -107,7 +84,7 @@ WHITELIST = [
 ]
 
 # ============================================================
-# 📝 ТЕКСТ ДЛЯ МЕНЮ БОТА
+# ТЕКСТЫ МЕНЮ
 # ============================================================
 WELCOME_TEXT = """
 👋 Привет! Это бот канала <b>Завод DAO</b>
@@ -120,21 +97,19 @@ WELCOME_TEXT = """
 COOPERATION_TEXT = """
 🤝 <b>Сотрудничество с Завод DAO</b>
 
-Мы рассматриваем следующие форматы:
-
 📌 <b>Добавление в агрегатор</b>
 Ваш канал попадает в список источников — лучшие посты будут репоститься к нам.
 Требования: тематика крипта, минимум рекламы, живая аудитория.
 
 📢 <b>Рекламная интеграция</b>
-Размещение поста о вашем канале или проекте в нашем агрегаторе.
+Размещение поста о вашем канале или проекте.
 
 📊 <b>Совместные активности</b>
-Коллаборации, совместные публикации, кросс-промо.
+Коллаборации, кросс-промо.
 
-✉️ <b>Для связи пишите:</b> @manager_rekt
+✉️ <b>Для связи пишите:</b> @Donbassdrumnbass
 
-Мы ответим в течение 24 часов.
+Ответим в течение 24 часов.
 """
 
 ABOUT_TEXT = """
@@ -143,95 +118,77 @@ ABOUT_TEXT = """
 Собираем лучшее из крипто-каналов в одном месте.
 
 ✅ Без рекламы
-✅ Без спама  
+✅ Без спама
 ✅ Только полезный контент
 
 📢 Канал: @zavod_dao
 """
 
 # ============================================================
-# КОД БОТА — ничего ниже менять не нужно
+# КОД БОТА
 # ============================================================
 
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler
 
-# Клиент для чтения каналов
-reader = TelegramClient('zavod_dao_session', API_ID, API_HASH)
+reader = TelegramClient("zavod_dao_session", API_ID, API_HASH)
+
 
 def is_blacklisted(text: str) -> bool:
-    """Проверяем есть ли в посте запрещённые слова"""
     text_lower = text.lower()
-    # Сначала проверяем белый список — если есть важное слово, пропускаем
     for word in WHITELIST:
         if word.lower() in text_lower:
             return False
-    # Проверяем чёрный список
     for word in BLACKLIST:
         if word.lower() in text_lower:
             return True
     return False
 
+
 async def forward_post(event):
-    """Пересылаем пост в наш канал"""
     try:
         message = event.message
-        if not message or not message.text and not message.media:
+        if not message:
             return
         text = message.text or ""
-        # Проверяем чёрный список
         if is_blacklisted(text):
-            print(f"🚫 Пост заблокирован (чёрный список): {text[:50]}...")
+            print(f"BLOCKED: {text[:50]}")
             return
-        # Пересылаем пост
         await reader.forward_messages(TARGET_CHANNEL, message)
-        print(f"✅ Пост опубликован из {event.chat.username}")
+        print(f"POSTED from {event.chat.username}")
     except Exception as e:
-        print(f"❌ Ошибка при пересылке: {e}")
+        print(f"ERROR: {e}")
 
-# Меню бота
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def start(update, context):
     keyboard = [
-        [InlineKeyboardButton("📢 Наш канал", url=f"https://t.me/zavod_dao")],
+        [InlineKeyboardButton("📢 Наш канал", url="https://t.me/zavod_dao")],
         [InlineKeyboardButton("🤝 Сотрудничество", callback_data="cooperation")],
         [InlineKeyboardButton("ℹ️ О нас", callback_data="about")],
     ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_html(WELCOME_TEXT, reply_markup=reply_markup)
+    await update.message.reply_html(WELCOME_TEXT, reply_markup=InlineKeyboardMarkup(keyboard))
 
-async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def button_handler(update, context):
     query = update.callback_query
     await query.answer()
+    back = [[InlineKeyboardButton("◀️ Назад", callback_data="back")]]
     if query.data == "cooperation":
-        keyboard = [[InlineKeyboardButton("◀️ Назад", callback_data="back")]]
-        await query.edit_message_text(
-            COOPERATION_TEXT,
-            parse_mode="HTML",
-            reply_markup=InlineKeyboardMarkup(keyboard)
-        )
+        await query.edit_message_text(COOPERATION_TEXT, parse_mode="HTML", reply_markup=InlineKeyboardMarkup(back))
     elif query.data == "about":
-        keyboard = [[InlineKeyboardButton("◀️ Назад", callback_data="back")]]
-        await query.edit_message_text(
-            ABOUT_TEXT,
-            parse_mode="HTML",
-            reply_markup=InlineKeyboardMarkup(keyboard)
-        )
+        await query.edit_message_text(ABOUT_TEXT, parse_mode="HTML", reply_markup=InlineKeyboardMarkup(back))
     elif query.data == "back":
         keyboard = [
             [InlineKeyboardButton("📢 Наш канал", url="https://t.me/zavod_dao")],
             [InlineKeyboardButton("🤝 Сотрудничество", callback_data="cooperation")],
             [InlineKeyboardButton("ℹ️ О нас", callback_data="about")],
         ]
-        await query.edit_message_text(
-            WELCOME_TEXT,
-            parse_mode="HTML",
-            reply_markup=InlineKeyboardMarkup(keyboard)
-        )
+        await query.edit_message_text(WELCOME_TEXT, parse_mode="HTML", reply_markup=InlineKeyboardMarkup(keyboard))
+
 
 async def run_reader():
-    """Запускаем чтение каналов"""
     await reader.start()
-    print("✅ Читатель каналов запущен")
+    print("Reader started")
 
     @reader.on(events.NewMessage(chats=SOURCE_CHANNELS))
     async def handler(event):
@@ -239,24 +196,22 @@ async def run_reader():
 
     await reader.run_until_disconnected()
 
+
 async def run_bot():
-    """Запускаем бота с меню"""
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_handler))
     await app.initialize()
     await app.start()
     await app.updater.start_polling()
-    print("✅ Бот с меню запущен")
+    print("Bot started")
     await asyncio.Event().wait()
 
+
 async def main():
-    """Запускаем всё вместе"""
-    print("🚀 Завод DAO Агрегатор запускается...")
-    await asyncio.gather(
-        run_reader(),
-        run_bot(),
-    )
+    print("Zavod DAO starting...")
+    await asyncio.gather(run_reader(), run_bot())
+
 
 if __name__ == "__main__":
     asyncio.run(main())
