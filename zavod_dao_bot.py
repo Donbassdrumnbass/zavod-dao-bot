@@ -16,7 +16,7 @@ API_HASH = "9cff7d08655717927a7f5e4ed64cae2b"
 BOT_TOKEN = "8772294114:AAHExInjuEa_Z_droP06DDs6ZY6mW58i_9g"
 TARGET_CHANNEL = "@zavod_dao"
 ADMIN_ID = 1873762723
-SESSION_STRING = ""  # сюда вставим строку сессии
+SESSION_STRING = "1ApWapzMBuwg43l7ZUrCuurEkZOZW-N2Pg5Fq07p-wnOgSyIv7f0u7dg5nwpnwgh9ldOkSupQqy5kiP_kCaFx6FaI8LCGVQcflPV0z1QAMLYx_yGIyeYP3rUpsKXUmrZF7DZiqV_DD3vZJD21cwrnKIPCpj1BRIe906lyNss4zMO5rdSHhMXFtKgGSTWx3xDm2i7NbhDSe1EVeBZlvDsUQauYIZTZ8tumgj6DfnXGYF8uVVRBL0sg5PwoY9srVq_QfOqtre_AbHex-Cju3gPtucMiHmIyeUW_JHYZFp2a8OCWFxt-zCaoyEyyqGNW5Ke0UGCKlHKjGk8tdIOFHnan_EB4jM35AqQ="  # сюда вставим строку сессии
 
 # ============================================================
 # 📋 СПИСОК КАНАЛОВ
